@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -44,6 +45,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v){
                 Log.d("Quizzler", "Button clicked");
+                Toast myToast = Toast.makeText(getApplicationContext(),
+                        "True Clicked", Toast.LENGTH_SHORT);
             }
         };
 
@@ -52,7 +55,8 @@ public class MainActivity extends Activity {
         mFalseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Toast.makeText(getApplicationContext(), "False Pressed",
+                        Toast.LENGTH_SHORT);
             }
         });
 
