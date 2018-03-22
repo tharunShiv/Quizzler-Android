@@ -4,11 +4,11 @@ package com.londonappbrewery.quizzler;
  * Created by tharu on 21-03-2018.
  */
 
-public class TrueOrFalse {
+public class TrueFalse {
     private int mQuestionId;
     private boolean mAnswer;
 
-    public TrueOrFalse(int QuestionResourceId, boolean answer){
+    public TrueFalse(int QuestionResourceId, boolean answer){
         mQuestionId = QuestionResourceId;
         mAnswer = answer;
     }
