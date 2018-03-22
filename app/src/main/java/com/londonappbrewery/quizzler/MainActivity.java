@@ -1,17 +1,17 @@
 package com.londonappbrewery.quizzler;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-
-    // TODO: Declare constants here
-
 
     // TODO: Declare member variables here:
     Button mTrueButton;
@@ -19,6 +19,9 @@ public class MainActivity extends Activity {
     TextView mQuestionTextView;
     int mIndex; //to track the question number //default start at 0
     int mQuestion;
+    int mScore; //To track the score
+    TextView mScoreTextView;
+    ProgressBar mProgressBar;
 
     // TODO: Uncomment to create question bank
     private TrueFalse[] mQuestionBank = new TrueFalse[] {
@@ -37,6 +40,10 @@ public class MainActivity extends Activity {
             new TrueFalse(R.string.question_13,true)
     };
 
+
+    // TODO: Declare constants here
+    final int PROGRESS_BAR_INCREMENT = (int) Math.ceil(100.0 / mQuestionBank.length); //updating each time
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +52,8 @@ public class MainActivity extends Activity {
         mTrueButton = (Button) findViewById(R.id.true_button);
         mFalseButton = (Button) findViewById(R.id.false_button);
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
+        mScoreTextView = (TextView) findViewById(R.id.score);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         // User defined method in the class TrueFalse
         mQuestion = mQuestionBank[mIndex].getQuestionId();
@@ -79,8 +88,28 @@ public class MainActivity extends Activity {
     // Updating to the next questions
     private void updateQuestion() {
         mIndex = (mIndex + 1) % mQuestionBank.length; //number of question -> mQuestionBank.length
+
+        if(mIndex == 0){
+            //AlertDialog.Builder alert = new AlertDialog.Builder(getApplicationContext());
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            // This refers to the current object, which here is our main activity
+            alert.setTitle("Well Played! Game Over");
+            alert.setCancelable(false);
+            alert.setMessage("You scored "+mScore+ " points! Congrats!");
+            alert.setPositiveButton("Close Application", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    finish(); //close app
+                }
+
+            });
+            alert.show();
+        }
+
         mQuestion = mQuestionBank[mIndex].getQuestionId();
         mQuestionTextView.setText(mQuestion);
+        mProgressBar.incrementProgressBy(PROGRESS_BAR_INCREMENT);
+        mScoreTextView.setText("Score " + mScore + "/" + mQuestionBank.length);
     }
 
     private void checkAnswer(boolean userSelection) {
@@ -88,6 +117,7 @@ public class MainActivity extends Activity {
 
         if(correctAnswer == userSelection) {
             Toast.makeText(getApplicationContext(), R.string.correct_toast, Toast.LENGTH_SHORT).show();
+            mScore+=1;
 
         } else {
             Toast.makeText(getApplicationContext(), R.string.incorrect_toast, Toast.LENGTH_SHORT).show();
