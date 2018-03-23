@@ -23,6 +23,8 @@ public class MainActivity extends Activity {
     TextView mScoreTextView;
     ProgressBar mProgressBar;
 
+    //to quit after dialog box appears
+    int mQuit=0;
     // TODO: Uncomment to create question bank
     private TrueFalse[] mQuestionBank = new TrueFalse[] {
             new TrueFalse(R.string.question_1, true),
@@ -49,6 +51,32 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(savedInstanceState != null){
+            mScore = savedInstanceState.getInt("ScoreKey");
+            mIndex = savedInstanceState.getInt("IndexKey");
+            mQuit = savedInstanceState.getInt("mQuit");
+        } else {
+            mScore = 0;
+            mIndex = 0;
+        }
+
+        // If screen has been rotated after the game ends
+        if(mIndex == 0 && mQuit == 1){
+            //AlertDialog.Builder alert = new AlertDialog.Builder(getApplicationContext());
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            // This refers to the current object, which here is our main activity
+            alert.setTitle("Well Played! Game Over");
+            alert.setCancelable(false);
+            alert.setMessage("You scored "+mScore+ " points! Congrats!");
+            alert.setPositiveButton("Close Application", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    finish(); //close app
+                }
+            });
+            alert.show();
+        }
+
         mTrueButton = (Button) findViewById(R.id.true_button);
         mFalseButton = (Button) findViewById(R.id.false_button);
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -59,6 +87,9 @@ public class MainActivity extends Activity {
         mQuestion = mQuestionBank[mIndex].getQuestionId();
         //the question id could be used to set text
         mQuestionTextView.setText(mQuestion);
+
+        //updating the view, especially after the screen rotate
+        mScoreTextView.setText("Score "+mScore+ "/"+mQuestionBank.length);
 
         mTrueButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -96,12 +127,12 @@ public class MainActivity extends Activity {
             alert.setTitle("Well Played! Game Over");
             alert.setCancelable(false);
             alert.setMessage("You scored "+mScore+ " points! Congrats!");
+            mQuit = 1;
             alert.setPositiveButton("Close Application", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     finish(); //close app
                 }
-
             });
             alert.show();
         }
@@ -123,5 +154,14 @@ public class MainActivity extends Activity {
             Toast.makeText(getApplicationContext(), R.string.incorrect_toast, Toast.LENGTH_SHORT).show();
 
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt("ScoreKey", mScore);
+        outState.putInt("IndexKey", mIndex);
+        outState.putInt("mQuit", mQuit);
     }
 }
